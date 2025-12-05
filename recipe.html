@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zesty Lemon Garlic Shrimp Pasta</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- GLOBAL STYLES --- */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Lato", sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        background-color: #f4f4f4;
+      }
+
+      /* --- THE PAGE CONTAINER --- 
+           FIX: We now use specific pixel width (794px) which is 
+           the exact pixel width of A4 paper at 96 DPI. 
+           This prevents the PDF tool from resizing/distorting.
+        */
+      .page-container {
+        width: 794px;
+        min-height: 1123px; /* A4 Height in pixels */
+        margin: 40px auto;
+        background: white;
+        padding: 50px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      /* --- IMAGES --- */
+      .hero-image {
+        width: 100%;
+        height: 350px; /* Fixed height prevents squashing */
+        object-fit: cover;
+        object-position: center;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        display: block;
+      }
+
+      /* --- TYPOGRAPHY --- */
+      h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.2rem;
+        text-align: center;
+        font-weight: 400;
+        margin: 10px 0 20px 0;
+      }
+
+      h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        margin-top: 0;
+        font-weight: 400;
+        margin-bottom: 20px;
+      }
+
+      /* --- LAYOUT --- */
+      .meta-info {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 15px 0;
+        margin-bottom: 30px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+      }
+
+      .recipe-grid {
+        display: grid;
+        grid-template-columns: 32% 63%; /* Adjusted slightly for safer spacing */
+        gap: 5%;
+        align-items: start;
+      }
+
+      /* --- INGREDIENTS BOX --- */
+      .ingredients-panel {
+        background-color: #f9ebea !important;
+        padding: 25px;
+        border-radius: 4px;
+        /* Fix for PDF background color */
+        -webkit-print-color-adjust: exact;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      ul li {
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+        border-bottom: 1px dashed #eecbc6;
+        padding-bottom: 5px;
+      }
+      ul li:last-child {
+        border-bottom: none;
+      }
+
+      /* --- INSTRUCTIONS --- */
+      .step {
+        margin-bottom: 18px;
+        font-size: 0.95rem;
+      }
+      .step strong {
+        color: #000;
+        font-weight: 700;
+      }
+
+      /* --- TIPS --- */
+      .tips {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid #f4f4f4;
+        font-style: italic;
+        color: #555;
+        font-size: 0.9rem;
+      }
+      .tips strong {
+        font-family: "Playfair Display", serif;
+        font-style: normal;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      /* --- CONTROLS --- */
+      .controls {
+        text-align: center;
+        padding: 20px;
+        background: #333;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .btn {
+        border: none;
+        padding: 12px 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: bold;
+        font-family: "Lato", sans-serif;
+        transition: background 0.2s;
+      }
+
+      .btn-download {
+        background-color: #27ae60;
+        color: white;
+      }
+      .btn-download:hover {
+        background-color: #219150;
+      }
+
+      .btn-print {
+        background-color: #7f8c8d;
+        color: white;
+      }
+      .btn-print:hover {
+        background-color: #606b6c;
+      }
+
+      .loading {
+        opacity: 0.5;
+        cursor: wait;
+      }
+
+      /* --- PRINT MEDIA QUERY --- 
+           This handles the native "Print" button 
+        */
+      @media print {
+        .controls {
+          display: none !important;
+        }
+        body {
+          background: white;
+          margin: 0;
+        }
+        .page-container {
+          width: 100%;
+          margin: 0;
+          padding: 20px 40px;
+          box-shadow: none;
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <button class="btn btn-download" onclick="downloadPDF()">
+        ⬇ Download PDF
+      </button>
+      <button class="btn btn-print" onclick="window.print()">🖨 Print</button>
+    </div>
+
+    <div class="page-container" id="content-to-pdf">
+      <img
+        src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80"
+        class="hero-image"
+        alt="Shrimp Pasta"
+        crossorigin="anonymous"
+      />
+
+      <h1>Zesty Lemon Garlic Shrimp Pasta</h1>
+
+      <div class="meta-info">
+        <div>Servings: 4</div>
+        <div>Prep Time: 15 Min</div>
+        <div>Cooking Time: 20 Min</div>
+      </div>
+
+      <div class="recipe-grid">
+        <div class="ingredients-panel">
+          <h2>Ingredients</h2>
+          <ul>
+            <li>8 oz linguine pasta</li>
+            <li>2 tbsp olive oil</li>
+            <li>1 lb large shrimp, peeled</li>
+            <li>Salt to taste</li>
+            <li>Black pepper to taste</li>
+            <li>1 tbsp minced garlic</li>
+            <li>1 tsp red pepper flakes</li>
+            <li>1/2 cup chicken broth</li>
+            <li>1 cup fresh lemon juice</li>
+            <li>Zest of 1 lemon</li>
+            <li>1/2 cup parsley, chopped</li>
+            <li>Grated Parmesan cheese</li>
+          </ul>
+        </div>
+
+        <div class="instructions-panel">
+          <h2>Instructions</h2>
+          <div class="step">
+            <strong>Cook the pasta:</strong> Bring a large pot of salted water
+            to a boil. Add the linguine and cook until al dente. Drain and set
+            aside.
+          </div>
+          <div class="step">
+            <strong>Prepare the shrimp:</strong> Meanwhile, heat the olive oil
+            in a large skillet over medium-high heat. Add shrimp, season with
+            salt and pepper, sauté 2-3 mins. Remove and set aside.
+          </div>
+          <div class="step">
+            <strong>Make the sauce:</strong> In the same skillet, add garlic and
+            pepper flakes. Cook 1 min. Stir in broth, lemon juice, and zest.
+            Simmer 5 mins until reduced.
+          </div>
+          <div class="step">
+            <strong>Combine:</strong> Return shrimp to skillet. Add pasta and
+            toss to combine, coating well with sauce.
+          </div>
+          <div class="step">
+            <strong>Serve:</strong> Remove from heat. Sprinkle with parsley and
+            Parmesan. Serve immediately.
+          </div>
+        </div>
+      </div>
+
+      <div class="tips">
+        <strong>Tips and Variations</strong>
+        <p>
+          For an extra punch of flavor, add a splash of white wine to the sauce.
+          Feel free to add vegetables like spinach or cherry tomatoes for added
+          nutrition.
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+      function downloadPDF() {
+        const element = document.getElementById("content-to-pdf");
+        const btn = document.querySelector(".btn-download");
+
+        btn.innerText = "Generating...";
+        btn.classList.add("loading");
+
+        const opt = {
+          margin: 0,
+          filename: "Lemon_Garlic_Shrimp.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          // FIX: force the canvas to capture at correct window width
+          html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+          // FIX: Use points (pt) which maps better to pixels than mm
+          jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+        };
+
+        html2pdf()
+          .set(opt)
+          .from(element)
+          .save()
+          .then(() => {
+            btn.innerText = "⬇ Download PDF";
+            btn.classList.remove("loading");
+          });
+      }
+    </script>
+  </body>
+</html>
