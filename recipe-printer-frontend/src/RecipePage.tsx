@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
-
+import type { RecipeData, Instruction } from "./types/recipe";
 import { initialRecipe } from "./data/initialRecipe";
 import { useRecipePdf } from "./hooks/useRecipePdf";
+import { scaleIngredient } from "./utils/recipeUtils";
 
 import RecipeHero from "./components/Recipe/RecipeHero";
 import RecipeHeader from "./components/Recipe/RecipeHeader";
@@ -9,7 +10,6 @@ import IngredientList from "./components/Recipe/IngredientList";
 import InstructionList from "./components/Recipe/InstructionList";
 import RecipeFooter from "./components/Recipe/RecipeFooter";
 import FloatingActions from "./components/UI/FloatingActions";
-import type { Instruction, RecipeData } from "./types/recipe";
 
 const RecipePage: React.FC = () => {
   const printRef = useRef<HTMLDivElement>(null);
@@ -25,11 +25,33 @@ const RecipePage: React.FC = () => {
     setRecipe((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleUpdateServings = (delta: number) => {
+    setRecipe((prev) => {
+      const currentServings = parseInt(prev.servings) || 1;
+      const newServings = Math.max(1, currentServings + delta);
+      
+      if (newServings === currentServings) return prev;
+
+      const scaleFactor = newServings / currentServings;
+
+      const newIngredients = prev.ingredients.map((ing) =>
+        scaleIngredient(ing, scaleFactor)
+      );
+
+      return {
+        ...prev,
+        servings: newServings.toString(),
+        ingredients: newIngredients,
+      };
+    });
+  };
+
   const handleIngredientChange = (index: number, value: string) => {
     const newIngredients = [...recipe.ingredients];
     newIngredients[index] = value;
     setRecipe((prev) => ({ ...prev, ingredients: newIngredients }));
   };
+
 
   const handleAddIngredient = () => {
     setRecipe((prev) => ({
@@ -122,6 +144,7 @@ const RecipePage: React.FC = () => {
             cookTime={recipe.cookTime}
             isEditing={isEditing}
             onInputChange={handleInputChange}
+            onUpdateServings={handleUpdateServings}
           />
 
           {/* Main Content Grid */}

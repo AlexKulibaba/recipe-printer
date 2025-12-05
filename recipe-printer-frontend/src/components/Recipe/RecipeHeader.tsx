@@ -1,5 +1,6 @@
 import React from "react";
 import type { RecipeData } from "../../types/recipe";
+import { Minus, Plus } from "lucide-react";
 
 interface RecipeHeaderProps {
   title: string;
@@ -8,6 +9,7 @@ interface RecipeHeaderProps {
   cookTime: string;
   isEditing: boolean;
   onInputChange: (field: keyof RecipeData, value: string) => void;
+  onUpdateServings: (delta: number) => void;
 }
 
 const RecipeHeader: React.FC<RecipeHeaderProps> = ({
@@ -17,6 +19,7 @@ const RecipeHeader: React.FC<RecipeHeaderProps> = ({
   cookTime,
   isEditing,
   onInputChange,
+  onUpdateServings,
 }) => {
   return (
     <header className="text-center mb-10">
@@ -38,12 +41,23 @@ const RecipeHeader: React.FC<RecipeHeaderProps> = ({
         <div className="flex items-center gap-2">
           <span>Servings:</span>
           {isEditing ? (
-            <input
-              type="text"
-              value={servings}
-              onChange={(e) => onInputChange("servings", e.target.value)}
-              className="w-12 text-center border-b border-gray-400 focus:outline-none bg-transparent"
-            />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onUpdateServings(-1)}
+                className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                aria-label="Decrease servings"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="w-8 text-center font-bold">{servings}</span>
+              <button
+                onClick={() => onUpdateServings(1)}
+                className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                aria-label="Increase servings"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <span>{servings}</span>
           )}

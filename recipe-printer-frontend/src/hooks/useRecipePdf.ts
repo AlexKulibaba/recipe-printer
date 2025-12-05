@@ -1,8 +1,11 @@
-import { useState, RefObject } from "react";
+import { useState, type RefObject } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export const useRecipePdf = (printRef: RefObject<HTMLDivElement | null>, title: string) => {
+export const useRecipePdf = (
+  printRef: RefObject<HTMLDivElement | null>,
+  title: string
+) => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleDownloadPDF = async () => {
