@@ -1,5 +1,9 @@
 import React from "react";
 import type { Instruction } from "../../types/recipe";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Plus, X } from "lucide-react";
 
 interface InstructionListProps {
   instructions: Instruction[];
@@ -29,29 +33,29 @@ const InstructionList: React.FC<InstructionListProps> = ({
       <div className="space-y-6">
         {instructions.map((instruction, index) => (
           <div className="flex gap-4 group relative" key={index}>
-            <span className="text-3xl font-serif font-bold text-gray-200 -mt-2">
+            <span className="text-3xl font-serif font-bold text-gray-200 -mt-2 select-none">
               {index + 1}
             </span>
             <div className="w-full">
               {isEditing ? (
                 <div className="flex flex-col gap-2">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Step Title (e.g., Cook the pasta)"
                     value={instruction.title}
                     onChange={(e) =>
                       onInstructionChange(index, "title", e.target.value)
                     }
-                    className="font-bold text-gray-900 border-b border-gray-300 focus:border-gray-500 focus:outline-none bg-transparent"
+                    className="font-bold text-gray-900 border-b border-gray-300 rounded-none shadow-none focus-visible:ring-0 px-0 h-auto py-1 bg-transparent focus:border-gray-500"
                   />
-                  <textarea
+                  <Textarea
                     placeholder="Step description..."
                     value={instruction.text}
                     onChange={(e) =>
                       onInstructionChange(index, "text", e.target.value)
                     }
                     rows={2}
-                    className="text-gray-800 leading-relaxed border border-gray-200 p-2 rounded focus:border-gray-500 focus:outline-none bg-transparent w-full"
+                    className="text-gray-800 leading-relaxed border border-gray-200 p-2 rounded focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-gray-500 bg-transparent w-full resize-y min-h-[80px]"
                   />
                 </div>
               ) : (
@@ -64,24 +68,27 @@ const InstructionList: React.FC<InstructionListProps> = ({
               )}
             </div>
             {isEditing && (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => onRemoveInstruction(index)}
-                className="absolute -right-6 top-0 text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity text-xl"
+                className="absolute -right-8 top-0 text-red-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
                 aria-label="Remove step"
               >
-                ×
-              </button>
+                <X className="h-4 w-4" />
+              </Button>
             )}
           </div>
         ))}
       </div>
       {isEditing && (
-        <button
+        <Button
+          variant="ghost"
           onClick={onAddInstruction}
-          className="mt-6 text-sm font-medium text-gray-500 hover:text-gray-800 flex items-center gap-1"
+          className="mt-6 text-sm font-medium text-gray-500 hover:text-gray-800 flex items-center gap-1 h-9 px-3"
         >
-          + Add Step
-        </button>
+          <Plus className="h-4 w-4" /> Add Step
+        </Button>
       )}
     </section>
   );

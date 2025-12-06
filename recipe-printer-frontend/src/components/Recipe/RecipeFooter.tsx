@@ -1,5 +1,6 @@
 import React from "react";
 import type { RecipeData } from "../../types/recipe";
+import { Textarea } from "@/components/ui/textarea";
 
 interface RecipeFooterProps {
   tips: string;
@@ -18,10 +19,10 @@ const RecipeFooter: React.FC<RecipeFooterProps> = ({
         Tips and Variations
       </h3>
       {isEditing ? (
-        <textarea
+        <Textarea
           value={tips}
           onChange={(e) => onInputChange("tips", e.target.value)}
-          className="w-full text-gray-600 italic text-sm leading-relaxed border border-dashed border-gray-300 p-2 rounded focus:outline-none focus:border-gray-500 bg-transparent"
+          className="w-full text-gray-600 italic text-sm leading-relaxed border border-dashed border-gray-300 p-2 rounded focus-visible:ring-0 focus:border-gray-500 bg-transparent min-h-[80px]"
           rows={3}
         />
       ) : (

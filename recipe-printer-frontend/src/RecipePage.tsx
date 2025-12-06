@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import type { RecipeData, Instruction } from "./types/recipe";
-import { initialRecipe } from "./data/initialRecipe";
 import { useRecipePdf } from "./hooks/useRecipePdf";
 import { scaleIngredient } from "./utils/recipeUtils";
 
@@ -11,10 +10,15 @@ import InstructionList from "./components/Recipe/InstructionList";
 import RecipeFooter from "./components/Recipe/RecipeFooter";
 import FloatingActions from "./components/UI/FloatingActions";
 
-const RecipePage: React.FC = () => {
+interface RecipePageProps {
+  recipe: RecipeData;
+  onRecipeChange: (recipe: RecipeData) => void;
+}
+
+const RecipePage: React.FC<RecipePageProps> = ({ recipe, onRecipeChange }) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [recipe, setRecipe] = useState<RecipeData>(initialRecipe);
+  // Recipe state is now managed by the parent component
 
   const { handleDownloadPDF, isGenerating } = useRecipePdf(
     printRef,
@@ -22,47 +26,44 @@ const RecipePage: React.FC = () => {
   );
 
   const handleInputChange = (field: keyof RecipeData, value: string) => {
-    setRecipe((prev) => ({ ...prev, [field]: value }));
+    onRecipeChange({ ...recipe, [field]: value });
   };
 
   const handleUpdateServings = (delta: number) => {
-    setRecipe((prev) => {
-      const currentServings = parseInt(prev.servings) || 1;
-      const newServings = Math.max(1, currentServings + delta);
-      
-      if (newServings === currentServings) return prev;
+    const currentServings = parseInt(recipe.servings) || 1;
+    const newServings = Math.max(1, currentServings + delta);
+    
+    if (newServings === currentServings) return;
 
-      const scaleFactor = newServings / currentServings;
+    const scaleFactor = newServings / currentServings;
 
-      const newIngredients = prev.ingredients.map((ing) =>
-        scaleIngredient(ing, scaleFactor)
-      );
+    const newIngredients = recipe.ingredients.map((ing) =>
+      scaleIngredient(ing, scaleFactor)
+    );
 
-      return {
-        ...prev,
-        servings: newServings.toString(),
-        ingredients: newIngredients,
-      };
+    onRecipeChange({
+      ...recipe,
+      servings: newServings.toString(),
+      ingredients: newIngredients,
     });
   };
 
   const handleIngredientChange = (index: number, value: string) => {
     const newIngredients = [...recipe.ingredients];
     newIngredients[index] = value;
-    setRecipe((prev) => ({ ...prev, ingredients: newIngredients }));
+    onRecipeChange({ ...recipe, ingredients: newIngredients });
   };
 
-
   const handleAddIngredient = () => {
-    setRecipe((prev) => ({
-      ...prev,
-      ingredients: [...prev.ingredients, ""],
-    }));
+    onRecipeChange({
+      ...recipe,
+      ingredients: [...recipe.ingredients, ""],
+    });
   };
 
   const handleRemoveIngredient = (index: number) => {
     const newIngredients = recipe.ingredients.filter((_, i) => i !== index);
-    setRecipe((prev) => ({ ...prev, ingredients: newIngredients }));
+    onRecipeChange({ ...recipe, ingredients: newIngredients });
   };
 
   const handleInstructionChange = (
@@ -72,17 +73,17 @@ const RecipePage: React.FC = () => {
   ) => {
     const newInstructions = [...recipe.instructions];
     newInstructions[index] = { ...newInstructions[index], [field]: value };
-    setRecipe((prev) => ({ ...prev, instructions: newInstructions }));
+    onRecipeChange({ ...recipe, instructions: newInstructions });
   };
 
   const handleAddInstruction = () => {
-    setRecipe((prev) => ({
-      ...prev,
+    onRecipeChange({
+      ...recipe,
       instructions: [
-        ...prev.instructions,
-        { step: prev.instructions.length + 1, title: "", text: "" },
+        ...recipe.instructions,
+        { step: recipe.instructions.length + 1, title: "", text: "" },
       ],
-    }));
+    });
   };
 
   const handleRemoveInstruction = (index: number) => {
@@ -92,7 +93,7 @@ const RecipePage: React.FC = () => {
       ...inst,
       step: i + 1,
     }));
-    setRecipe((prev) => ({ ...prev, instructions: reindexedInstructions }));
+    onRecipeChange({ ...recipe, instructions: reindexedInstructions });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +104,7 @@ const RecipePage: React.FC = () => {
         URL.revokeObjectURL(recipe.imageUrl);
       }
       const newImageUrl = URL.createObjectURL(file);
-      setRecipe((prev) => ({ ...prev, imageUrl: newImageUrl }));
+      onRecipeChange({ ...recipe, imageUrl: newImageUrl });
     }
   };
 
@@ -117,7 +118,7 @@ const RecipePage: React.FC = () => {
   }, [recipe.imageUrl]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8 font-sans relative">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8 font-sans relative flex-1">
       <FloatingActions
         isEditing={isEditing}
         isGenerating={isGenerating}

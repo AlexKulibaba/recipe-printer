@@ -1,6 +1,7 @@
 import React from "react";
 import type { RecipeData } from "../../types/recipe";
 import { Minus, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface RecipeHeaderProps {
   title: string;
@@ -24,11 +25,11 @@ const RecipeHeader: React.FC<RecipeHeaderProps> = ({
   return (
     <header className="text-center mb-10">
       {isEditing ? (
-        <input
+        <Input
           type="text"
           value={title}
           onChange={(e) => onInputChange("title", e.target.value)}
-          className="w-full text-center text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight border-b-2 border-dashed border-gray-400 focus:outline-none focus:border-gray-800 bg-transparent"
+          className="w-full text-center text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight border-b-2 border-dashed border-gray-400 rounded-none shadow-none focus-visible:ring-0 focus:border-gray-800 bg-transparent px-0 py-2 h-auto"
         />
       ) : (
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight">
@@ -68,11 +69,11 @@ const RecipeHeader: React.FC<RecipeHeaderProps> = ({
         <div className="flex items-center gap-2">
           <span>Prep:</span>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               value={prepTime}
               onChange={(e) => onInputChange("prepTime", e.target.value)}
-              className="w-20 text-center border-b border-gray-400 focus:outline-none bg-transparent"
+              className="w-20 text-center border-b border-gray-400 rounded-none shadow-none focus-visible:ring-0 px-0 h-auto py-1 bg-transparent"
             />
           ) : (
             <span>{prepTime}</span>
@@ -84,11 +85,11 @@ const RecipeHeader: React.FC<RecipeHeaderProps> = ({
         <div className="flex items-center gap-2">
           <span>Cook:</span>
           {isEditing ? (
-            <input
+            <Input
               type="text"
               value={cookTime}
               onChange={(e) => onInputChange("cookTime", e.target.value)}
-              className="w-20 text-center border-b border-gray-400 focus:outline-none bg-transparent"
+              className="w-20 text-center border-b border-gray-400 rounded-none shadow-none focus-visible:ring-0 px-0 h-auto py-1 bg-transparent"
             />
           ) : (
             <span>{cookTime}</span>
